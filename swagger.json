@@ -1,265 +1,449 @@
 {
-  "openapi": "3.0.0",
-  "info": {
-    "title": "Real Estate Platform API",
-    "version": "1.0.0",
-    "description": "API documentation for the Real Estate Platform built with Node.js, Express, and PostgreSQL"
-  },
-  "servers": [
-    { "url": "http://localhost:3000/api" }
-  ],
-  "paths": {
-    "/auth/register": {
-      "post": {
-        "summary": "Register a new user",
-        "tags": ["Authentication"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": { "type": "string", "example": "owner1" },
-                  "password": { "type": "string", "example": "12345" },
-                  "role": { "type": "string", "example": "owner" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": { "description": "User registered successfully" }
-        }
-      }
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Real Estate Platform API",
+        "version": "1.0.0",
+        "description": "API documentation for the Real Estate Platform built with Node.js, Express, and PostgreSQL"
     },
-    "/auth/login": {
-      "post": {
-        "summary": "Login user and get JWT token",
-        "tags": ["Authentication"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": { "type": "string", "example": "owner1" },
-                  "password": { "type": "string", "example": "12345" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "JWT token returned" }
-        }
-      }
-    },
-    "/properties": {
-      "get": {
-        "summary": "Get all properties (public, supports pagination and filters)",
-        "tags": ["Properties"],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": { "type": "integer", "default": 1 },
-            "description": "Page number (for pagination)"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": { "type": "integer", "default": 5 },
-            "description": "Number of results per page"
-          },
-          {
-            "name": "location",
-            "in": "query",
-            "schema": { "type": "string" },
-            "description": "Filter by location (e.g., Downtown)"
-          },
-          {
-            "name": "minPrice",
-            "in": "query",
-            "schema": { "type": "number" },
-            "description": "Minimum price filter"
-          },
-          {
-            "name": "maxPrice",
-            "in": "query",
-            "schema": { "type": "number" },
-            "description": "Maximum price filter"
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "schema": { "type": "string" },
-            "description": "Filter by property type (e.g., apartment, house)"
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["price_asc", "price_desc"]
-            },
-            "description": "Sort by price ascending or descending"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Paginated list of properties",
-            "content": {
-              "application/json": {
-                "example": {
-                  "page": 1,
-                  "limit": 5,
-                  "total": 15,
-                  "results": [
-                    {
-                      "id": 1,
-                      "title": "2BHK Apartment",
-                      "price": 250000,
-                      "location": "Downtown"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create property (owner only)",
-        "tags": ["Properties"],
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": { "type": "string", "example": "3BHK Apartment" },
-                  "description": { "type": "string", "example": "Spacious apartment near park" },
-                  "price": { "type": "number", "example": 500000 },
-                  "location": { "type": "string", "example": "Downtown" },
-                  "bedrooms": { "type": "integer", "example": 3 },
-                  "bathrooms": { "type": "integer", "example": 2 },
-                  "area": { "type": "number", "example": 1200 },
-                  "property_type": { "type": "string", "example": "apartment" },
-                  "listing_type": { "type": "string", "example": "sale" },
-                  "images": {
-                    "type": "array",
-                    "items": { "type": "string" },
-                    "example": ["img1.jpg", "img2.jpg"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": { "description": "Property created successfully" }
-        }
-      }
-    },
-    "/properties/{id}": {
-    "get": {
-        "summary": "Get single property by ID (includes owner username for customers)",
-        "tags": ["Properties"],
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
+    "servers": [
         {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" },
-            "description": "Property ID"
+            "url": "http://localhost:3000/api"
         }
-        ],
-        "responses": {
-        "200": {
-            "description": "Single property details (owner_username included for customers)",
-            "content": {
-            "application/json": {
-                "example": {
-                "id": 7,
-                "title": "Luxury Condo",
-                "description": "Penthouse suite with skyline view",
-                "price": 900000,
-                "location": "Midtown",
-                "bedrooms": 4,
-                "bathrooms": 3,
-                "area": 3500,
-                "property_type": "condo",
-                "listing_type": "sale",
-                "images": ["img4.jpg"],
-                "owner_id": 1,
-                "owner_username": "owner1"
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "summary": "Register a new user",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "owner1"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "12345"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "owner"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully"
+                    }
                 }
             }
-            }
         },
-        "404": { "description": "Property not found" }
-        }
-    },
-    "put": {
-        "summary": "Update property (owner only)",
-        "tags": ["Properties"],
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-        { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
-        ],
-        "requestBody": {
-        "required": true,
-        "content": {
-            "application/json": {
-            "schema": {
-                "type": "object",
-                "properties": {
-                "title": { "type": "string" },
-                "description": { "type": "string" },
-                "price": { "type": "number" }
+        "/auth/login": {
+            "post": {
+                "summary": "Login user and get JWT token",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "owner1"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "12345"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "JWT token returned"
+                    }
                 }
             }
+        },
+        "/properties": {
+            "get": {
+                "summary": "Get all properties (public, supports pagination and filters)",
+                "tags": [
+                    "Properties"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "description": "Page number (for pagination)"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        },
+                        "description": "Number of results per page"
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter by location (e.g., Downtown)"
+                    },
+                    {
+                        "name": "minPrice",
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "description": "Minimum price filter"
+                    },
+                    {
+                        "name": "maxPrice",
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "description": "Maximum price filter"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter by property type (e.g., apartment, house)"
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "price_asc",
+                                "price_desc"
+                            ]
+                        },
+                        "description": "Sort by price ascending or descending"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of properties",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "page": 1,
+                                    "limit": 5,
+                                    "total": 15,
+                                    "results": [
+                                        {
+                                            "id": 1,
+                                            "title": "2BHK Apartment",
+                                            "price": 250000,
+                                            "location": "Downtown"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create property (owner only)",
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "3BHK Apartment"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Spacious apartment near park"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 500000
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Downtown"
+                                    },
+                                    "bedrooms": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "bathrooms": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "area": {
+                                        "type": "number",
+                                        "example": 1200
+                                    },
+                                    "property_type": {
+                                        "type": "string",
+                                        "example": "apartment"
+                                    },
+                                    "listing_type": {
+                                        "type": "string",
+                                        "example": "sale"
+                                    },
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "img1.jpg",
+                                            "img2.jpg"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Property created successfully"
+                    }
+                }
+            }
+        },
+        "/properties/{id}": {
+            "get": {
+                "summary": "Get property details by ID (owner contact shown only to customers)",
+                "tags": [
+                    "Properties"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Single property details (includes owner username for customers)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 7
+                                        },
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Luxury Condo"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Penthouse suite with skyline view"
+                                        },
+                                        "price": {
+                                            "type": "number",
+                                            "example": 900000
+                                        },
+                                        "location": {
+                                            "type": "string",
+                                            "example": "Midtown"
+                                        },
+                                        "bedrooms": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "bathrooms": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "area": {
+                                            "type": "number",
+                                            "example": 3500
+                                        },
+                                        "property_type": {
+                                            "type": "string",
+                                            "example": "condo"
+                                        },
+                                        "listing_type": {
+                                            "type": "string",
+                                            "example": "sale"
+                                        },
+                                        "images": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "img4.jpg"
+                                            ]
+                                        },
+                                        "owner_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "owner_username": {
+                                            "type": "string",
+                                            "example": "owner1",
+                                            "description": "Visible only to logged-in customers"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update property (owner only)",
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Property updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete property (owner only)",
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Property deleted successfully"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "Get all users (admin only)",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users"
+                    },
+                    "403": {
+                        "description": "Forbidden (non-admin)"
+                    }
+                }
             }
         }
-        },
-        "responses": { "200": { "description": "Property updated successfully" } }
     },
-    "delete": {
-        "summary": "Delete property (owner only)",
-        "tags": ["Properties"],
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-        { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
-        ],
-        "responses": { "200": { "description": "Property deleted successfully" } }
-    }
-    }
-
-    },
-    "/users": {
-      "get": {
-        "summary": "Get all users (admin only)",
-        "tags": ["Users"],
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": { "description": "List of users" },
-          "403": { "description": "Forbidden (non-admin)" }
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
         }
-      }
     }
-  },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    }
-  }
 }
