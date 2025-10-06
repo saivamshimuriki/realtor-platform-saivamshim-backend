@@ -1,28 +1,39 @@
 # 🏠 Real Estate Platform API
 
 A RESTful backend application built using **Node.js**, **Express**, and **PostgreSQL** for managing property listings, user authentication, and role-based access control.  
-Includes full CRUD operations, JWT authentication, and Swagger documentation.
+Includes full CRUD operations, JWT authentication, and **live Swagger documentation** hosted on Render.
+
+---
+
+## 🌐 Live Deployment
+
+| Environment | URL |
+|--------------|-----|
+| **Live API Base URL** | [https://realtor-platform-saivamshim-backend.onrender.com/api](https://realtor-platform-saivamshim-backend.onrender.com/api) |
+| **Swagger UI** | [https://realtor-platform-saivamshim-backend.onrender.com/api/docs](https://realtor-platform-saivamshim-backend.onrender.com/api/docs) |
+
+ *Note:* This is deployed on **Render Free Plan**, so the API may take **20–30 seconds** to wake up after inactivity.
 
 ---
 
 ## 🚀 Features
 
 - **Authentication**
-  - User registration with role: `owner`, `customer`, `admin`
+  - User registration with roles: `owner`, `customer`, `admin`
   - Secure login with JWT token
   - Role-based route protection
 
 - **Property Management**
   - Owners can create, update, delete their own properties
-  - Public (guest) and customer users can browse all properties
-  - Filters: location, price range, property type, sorting
+  - Public and customer users can browse properties
+  - Search, filter, sort, and pagination support
 
 - **User Management**
-  - Admin-only access to view all users or single user details
+  - Admin-only routes to view all or single user details
 
 - **Documentation**
-  - Interactive Swagger UI for API testing
-  - JWT authorization built-in to Swagger
+  - Built-in Swagger UI for interactive API testing
+  - JWT authorization available directly in Swagger (`Authorize 🔒` button)
 
 ---
 
@@ -40,12 +51,12 @@ Includes full CRUD operations, JWT authentication, and Swagger documentation.
 
 ---
 
-## 🏗️ Project Setup
+## 🎗️ Project Setup (Local Development)
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/real-estate-platform.git
-cd real-estate-platform
+git clone https://github.com/saivamshimuriki/realtor-platform-saivamshim-backend.git
+cd realtor-platform-saivamshim-backend
 ```
 
 ### 2️⃣ Install Dependencies
@@ -68,7 +79,7 @@ JWT_SECRET=mysecretkey
 
 ### 4️⃣ Configure Database
 
-Open `psql` or pgAdmin and run:
+Run the following in `psql` or `pgAdmin`:
 
 ```sql
 CREATE DATABASE realestate;
@@ -100,20 +111,18 @@ CREATE TABLE properties(
 
 ---
 
-## ▶️ Run the Server
+## ▶️ Run the Server Locally
 
-Start your local development server:
 ```bash
 npm start
 ```
 
 Visit:
 ```
-http://localhost:3000/
+http://localhost:3000/api/docs
 ```
 
-✅ You should see:  
-`Real Estate API is running 🚀`
+✅ You should see the **Swagger UI** running locally.
 
 ---
 
@@ -145,7 +154,7 @@ Response:
 }
 ```
 
-Use this token in your requests as:
+Use this token for secured requests:
 ```
 Authorization: Bearer <token>
 ```
@@ -157,14 +166,14 @@ Authorization: Bearer <token>
 | Method | Endpoint | Description | Auth Required |
 |---------|-----------|--------------|----------------|
 | `POST` | `/api/properties` | Create new property | Owner |
-| `GET` | `/api/properties` | Get all properties (with filters) | Public |
+| `GET` | `/api/properties` | Get all properties (with filters/pagination) | Public |
 | `GET` | `/api/properties/:id` | Get single property | Public |
 | `PUT` | `/api/properties/:id` | Update own property | Owner |
 | `DELETE` | `/api/properties/:id` | Delete own property | Owner |
 
 ### Example Filter
 ```
-GET /api/properties?location=Downtown&minPrice=200000&maxPrice=500000&sortBy=price_desc
+GET /api/properties?location=Downtown&minPrice=200000&maxPrice=500000&sortBy=price_desc&page=2
 ```
 
 ---
@@ -174,70 +183,90 @@ GET /api/properties?location=Downtown&minPrice=200000&maxPrice=500000&sortBy=pri
 | Method | Endpoint | Description | Role |
 |---------|-----------|-------------|------|
 | `GET` | `/api/users` | Get all users | Admin |
-| `GET` | `/api/users/:id` | Get user by ID | Admin |
+| `GET` | `/api/users/:id` | Get single user by ID | Admin |
 
 ---
 
 ## 📘 API Documentation (Swagger UI)
 
-Once the server is running, visit:
+### 🔗 Local
 ```
 http://localhost:3000/api/docs
 ```
 
-There you can:
-- View all API endpoints  
-- Authenticate using JWT via the **Authorize 🔒 button**  
-- Test routes directly inside your browser
+### 🔗 Render (Live)
+```
+https://realtor-platform-saivamshim-backend.onrender.com/api/docs
+```
+
+You can:
+- View all endpoints
+- Authenticate via JWT in Swagger (`Authorize` button)
+- Test requests live against either:
+  - Localhost (for development)
+  - Render deployment (for live testing)
 
 ---
 
-## 🧠 Example Roles and Behavior
+## 🧠 Role Behavior
 
 | Role | Permissions |
 |------|--------------|
 | **Owner** | Create, update, delete own properties |
-| **Customer** | View properties, view owner contact |
+| **Customer** | Browse listings, view limited owner contact |
 | **Admin** | Manage users, view all data |
 
 ---
 
-## 📦 Folder Structure
+## 🗂 Folder Structure
 
 ```
-real-estate-platform/
+realtor-platform-saivamshim-backend/
 │
 ├── routes/
 │   ├── authRoutes.js
 │   ├── propertyRoutes.js
 │   └── userRoutes.js
 │
-├── models/          # (Optional - for schema separation)
-├── db.js            # PostgreSQL connection
-├── index.js         # Main server entry
-├── swagger.json     # Swagger configuration
-├── .env             # Environment variables
+├── models/          # Optional model definitions
+├── db.js            # PostgreSQL connection logic
+├── index.js         # Main server file
+├── swagger.json     # Swagger config with live + local servers
+├── .env.example     # Sample environment file
 └── package.json
 ```
 
 ---
 
-## 🧪 Example Testing Order
+## 🥪 Testing Workflow
 
-1️⃣ Register → 2️⃣ Login → 3️⃣ Copy Token → 4️⃣ Authorize in Swagger → 5️⃣ Test CRUD  
+1️⃣ **Register** new users  
+2️⃣ **Login** → copy the JWT token  
+3️⃣ **Authorize** in Swagger  
+4️⃣ **Create** or **fetch** properties  
+5️⃣ **Verify** data in DB or via `/api/properties`  
 
 ---
 
-## 💾 Deployment Notes (Optional)
-You can host this on:
-- **Render** / **Railway** / **Vercel (Server)** for backend  
-- Connect PostgreSQL via **Neon**, **Supabase**, or **ElephantSQL**
+## 💾 Deployment Notes
+
+- Hosted on **Render** Free Tier
+  - Sleeps after ~15 min of inactivity
+  - Wakes automatically on next request
+- Database: **Render PostgreSQL**
+- Default Port: `10000` (Render) or `3000` (Local)
+- To deploy yourself:
+  1. Fork this repo  
+  2. Push to GitHub  
+  3. Deploy via [Render.com](https://render.com)
 
 ---
 
 ## 🏁 Author
-**Your Name Here**  
-📧 your.email@example.com  
-💼 [GitHub Profile](https://github.com/<your-username>)
+**Sai vamshi Muriki**  
+📧 saivamshimuriki@gmail.com  
+💼 [GitHub Profile](https://github.com/saivamshimuriki)  
+🌍 [Live API on Render](https://realtor-platform-saivamshim-backend.onrender.com/api/docs)
 
 ---
+
