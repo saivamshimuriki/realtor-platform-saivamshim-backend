@@ -7,7 +7,12 @@
     },
     "servers": [
         {
-            "url": "http://localhost:3000/api"
+            "url": "https://realtor-platform-saivamshim-backend.onrender.com/api",
+            "description": "Render Deployed Server"
+        },
+        {
+            "url": "http://localhost:3000/api",
+            "description": "Local Development Server"
         }
     ],
     "paths": {
